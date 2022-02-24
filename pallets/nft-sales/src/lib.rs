@@ -31,6 +31,8 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
+mod benchmarking;
+
 // Type aliases
 type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
 
