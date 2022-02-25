@@ -57,9 +57,33 @@ benchmarks! {
 		// We need the nft in the storage beforehand to be able to remove it
 		<Sales<T>>::insert(class_id.clone(), instance_id.clone(), Sale { seller: seller_account, price});
 
-	}: remove(seller_origin, class_id, instance_id)
+	}: _(seller_origin, class_id, instance_id)
 	verify {
 		assert!(<Sales<T>>::get(class_id, instance_id).is_none(), "The NFT should have been removed from sale");
+	}
+
+	// Remove an NFT from sale
+	buy {
+		let seller_account = account::<T::AccountId>("seller", 0, 0);
+		let seller_origin: RawOrigin<T::AccountId> = RawOrigin::Signed(seller_account.clone()).into();
+		deposit_native_balance::<T>(&seller_account);
+
+		// We need the NFT to exist in the pallet-uniques before we can put it for sale
+		let (class_id, instance_id) = mint_nft::<T>(0, 1, &seller_account);
+		// Define the price
+		let price: Price<crate::CurrencyOf<T>, crate::BalanceOf<T>> = Price { currency: CurrencyId::Usd.into(), amount: 10_000u128.into() };
+
+		// We need the nft in the storage beforehand to be able to remove it
+		<Sales<T>>::insert(class_id.clone(), instance_id.clone(), Sale { seller: seller_account, price: price.clone()});
+
+		// We need the buyer to have enough balance to pay for the NFT
+		let buyer_account = account::<T::AccountId>("buyer", 0, 0);
+		let buyer_origin: RawOrigin<T::AccountId> = RawOrigin::Signed(buyer_account.clone()).into();
+		deposit_token_balance::<T>(&buyer_account, CurrencyId::Usd, 100_000u128.into());
+
+	}: _(buyer_origin, class_id, instance_id, price)
+	verify {
+		assert!(<Sales<T>>::get(class_id, instance_id).is_none(), "The NFT should have been removed from sale once bought");
 	}
 }
 
