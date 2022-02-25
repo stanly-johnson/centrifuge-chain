@@ -20,6 +20,8 @@ sp-runtime = { git = "https://github.com/paritytech/substrate", default-features
 
 # optional dependencies for benchmarking
 frame-benchmarking = { git = "https://github.com/paritytech/substrate",  default-features = false , optional = true , branch = "polkadot-v0.9.16" }
+common-types = { path = "../../libs/common-types", default-features = false }
+pallet-uniques = { git = "https://github.com/paritytech/substrate",  default-features = false , branch = "polkadot-v0.9.16" }
 
 [dev-dependencies]
 # Substrate crates & pallets
@@ -41,8 +43,9 @@ default = ['std']
 runtime-benchmarks = ["frame-benchmarking"]
 std = [
     'codec/std',
+    'common-types/std',
     'frame-support/std',
     'frame-system/std',
     'sp-std/std',
-    'sp-runtime/std'
+    'sp-runtime/std',
 ]
