@@ -16,7 +16,7 @@ use frame_support::{
 	dispatch::DispatchResult,
 	traits::{
 		fungibles::{self, Transfer as FungiblesTransfer},
-		tokens::nonfungibles::{self, Inspect as _, Transfer as NonFungiblesTransfer},
+		tokens::nonfungibles::{self, Inspect as _, Transfer as _},
 	},
 };
 use frame_system::ensure_signed;
@@ -33,10 +33,12 @@ mod tests;
 
 mod benchmarking;
 
+pub mod weights;
+
 // Type aliases
 type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
 
-pub type CurrencyOf<T> =
+type CurrencyOf<T> =
 	<<T as pallet::Config>::Fungibles as fungibles::Inspect<AccountIdOf<T>>>::AssetId;
 
 type BalanceOf<T> =
@@ -67,6 +69,7 @@ pub struct Price<CurrencyId, Balance> {
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
+	use crate::weights::WeightInfo;
 	use frame_support::pallet_prelude::*;
 	use frame_support::{transactional, PalletId};
 	use frame_system::pallet_prelude::*;
@@ -80,6 +83,8 @@ pub mod pallet {
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+
+		type WeightInfo: WeightInfo;
 
 		/// Fungibles implements fungibles::Transfer, granting us a way of charging
 		/// the buyer of an NFT the respective asking price.
@@ -182,7 +187,7 @@ pub mod pallet {
 		///   - `origin` is not the owner of the nft
 		///   - the nft is already for sale
 		///   - transferring ownership of the NFT to this pallet's account fails
-		#[pallet::weight(200_000_000)]
+		#[pallet::weight(<T as Config>::WeightInfo::add())]
 		pub fn add(
 			origin: OriginFor<T>,
 			class_id: T::ClassId,
@@ -227,7 +232,7 @@ pub mod pallet {
 		///   - the nft is not for sale
 		///   - `origin` is not the seller of the NFT
 		///   - transferring the ownership of the NFT back to the seller fails
-		#[pallet::weight(200_000_000)]
+		#[pallet::weight(<T as Config>::WeightInfo::remove())]
 		pub fn remove(
 			origin: OriginFor<T>,
 			class_id: T::ClassId,
@@ -266,7 +271,7 @@ pub mod pallet {
 		///   - `origin` does not have enough balance of the currency the nft is being sold in
 		///   - transferring the asking price from the buyer to the seller fails
 		///   - transferring the nft to the buyer fails
-		#[pallet::weight(200_000_000)]
+		#[pallet::weight(<T as Config>::WeightInfo::buy())]
 		#[transactional]
 		pub fn buy(
 			origin: OriginFor<T>,

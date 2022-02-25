@@ -681,6 +681,7 @@ parameter_types! {
 
 impl pallet_nft_sales::Config for Runtime {
 	type Event = Event;
+	type WeightInfo = pallet_nft_sales::weights::SubstrateWeight<Self>;
 	type Fungibles = Tokens;
 	type NonFungibles = Uniques;
 	type ClassId = ClassId;

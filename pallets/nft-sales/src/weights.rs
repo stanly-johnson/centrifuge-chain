@@ -21,21 +21,54 @@
 #![allow(unused_parens)]
 #![allow(unused_imports)]
 
-use frame_support::{traits::Get, weights::{Weight, constants::RocksDbWeight}};
+use frame_support::{
+	traits::Get,
+	weights::{constants::RocksDbWeight, Weight},
+};
 use sp_std::marker::PhantomData;
 
 /// Weight functions needed for pallet_nft_sales.
-pub trait WeightInfo {	fn add() -> Weight;	fn remove() -> Weight;	fn buy() -> Weight;}
+pub trait WeightInfo {
+	fn add() -> Weight;
+	fn remove() -> Weight;
+	fn buy() -> Weight;
+}
 
 /// Weights for pallet_nft_sales using the Substrate node and recommended hardware.
 pub struct SubstrateWeight<T>(PhantomData<T>);
-impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {	fn add() -> Weight {
-		(29_000_000 as Weight)			.saturating_add(T::DbWeight::get().reads(3 as Weight))			.saturating_add(T::DbWeight::get().writes(4 as Weight))	}	fn remove() -> Weight {
-		(28_000_000 as Weight)			.saturating_add(T::DbWeight::get().reads(3 as Weight))			.saturating_add(T::DbWeight::get().writes(3 as Weight))	}	fn buy() -> Weight {
-		(50_000_000 as Weight)			.saturating_add(T::DbWeight::get().reads(6 as Weight))			.saturating_add(T::DbWeight::get().writes(7 as Weight))	}}
+impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
+	fn add() -> Weight {
+		(29_000_000 as Weight)
+			.saturating_add(T::DbWeight::get().reads(3 as Weight))
+			.saturating_add(T::DbWeight::get().writes(4 as Weight))
+	}
+	fn remove() -> Weight {
+		(28_000_000 as Weight)
+			.saturating_add(T::DbWeight::get().reads(3 as Weight))
+			.saturating_add(T::DbWeight::get().writes(3 as Weight))
+	}
+	fn buy() -> Weight {
+		(48_000_000 as Weight)
+			.saturating_add(T::DbWeight::get().reads(6 as Weight))
+			.saturating_add(T::DbWeight::get().writes(7 as Weight))
+	}
+}
 
 // For backwards compatibility and tests
-impl WeightInfo for () {	fn add() -> Weight {
-		(29_000_000 as Weight)			.saturating_add(RocksDbWeight::get().reads(3 as Weight))			.saturating_add(RocksDbWeight::get().writes(4 as Weight))	}	fn remove() -> Weight {
-		(28_000_000 as Weight)			.saturating_add(RocksDbWeight::get().reads(3 as Weight))			.saturating_add(RocksDbWeight::get().writes(3 as Weight))	}	fn buy() -> Weight {
-		(50_000_000 as Weight)			.saturating_add(RocksDbWeight::get().reads(6 as Weight))			.saturating_add(RocksDbWeight::get().writes(7 as Weight))	}}
+impl WeightInfo for () {
+	fn add() -> Weight {
+		(29_000_000 as Weight)
+			.saturating_add(RocksDbWeight::get().reads(3 as Weight))
+			.saturating_add(RocksDbWeight::get().writes(4 as Weight))
+	}
+	fn remove() -> Weight {
+		(28_000_000 as Weight)
+			.saturating_add(RocksDbWeight::get().reads(3 as Weight))
+			.saturating_add(RocksDbWeight::get().writes(3 as Weight))
+	}
+	fn buy() -> Weight {
+		(48_000_000 as Weight)
+			.saturating_add(RocksDbWeight::get().reads(6 as Weight))
+			.saturating_add(RocksDbWeight::get().writes(7 as Weight))
+	}
+}
