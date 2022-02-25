@@ -36,7 +36,7 @@ mod benchmarking;
 // Type aliases
 type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
 
-type CurrencyOf<T> =
+pub type CurrencyOf<T> =
 	<<T as pallet::Config>::Fungibles as fungibles::Inspect<AccountIdOf<T>>>::AssetId;
 
 type BalanceOf<T> =
